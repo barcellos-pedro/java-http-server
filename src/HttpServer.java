@@ -11,26 +11,17 @@ public class HttpServer {
         return new HttpServer(port);
     }
 
-    public void start() {
+    void listen(Consumer<Socket> handler) throws IOException {
         IO.println("Server running at http://localhost:" + port);
 
         try (var server = new ServerSocket(port)) {
             for (; ; ) {
                 try (var socket = server.accept()) {
-                    var request = Request.of(socket);
-                    IO.println(request);
-
-                    try (var response = socket.getOutputStream()) {
-                        var data = Controller.handle(request);
-                        response.write(data);
-                    }
+                    handler.accept(socket);
                 } catch (IOException exception) {
                     IO.println("[REQUEST:ERROR] " + exception);
                 }
             }
-        } catch (IOException exception) {
-            IO.println("[SERVER:ERROR] " + exception);
         }
     }
-
 }

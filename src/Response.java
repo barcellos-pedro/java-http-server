@@ -3,21 +3,19 @@ import module java.base;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Response {
-    public static byte[] of(String value) {
+    public static String of(String value) {
         return of(value, Type.TEXT);
     }
 
-    public static byte[] of(String value, Type type) {
-        var responseBody = bindValues(type, value);
-        return responseBody.getBytes(UTF_8);
+    public static String of(String value, Type type) {
+        return bindValues(type, value);
     }
 
-    public static byte[] of(char[] value, Type type) {
-        var responseBody = bindValues(type, new String(value));
-        return responseBody.getBytes(UTF_8);
+    public static String of(char[] value, Type type) {
+        return bindValues(type, new String(value));
     }
 
-    public static byte[] echo(Request request, Type type) throws IOException {
+    public static String echo(Request request, Type type) throws IOException {
         var reqBody = request.parseBody();
         return of(reqBody, type);
     }

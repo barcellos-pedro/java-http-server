@@ -1,7 +1,22 @@
 import java.io.IOException;
+import java.net.Socket;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Controller {
-    public static byte[] handle(Request request) throws IOException {
+    public static void handle(Socket socket) {
+        try (var response = socket.getOutputStream()) {
+            var data = Controller.route(socket);
+            response.write(data.getBytes(UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String route(Socket socket) throws IOException {
+        var request = Request.of(socket);
+        IO.println(request);
+
         return switch (request.getPath()) {
             case "/greeting" -> handleGretting();
             case "/message" -> handleMessage(request);
@@ -9,11 +24,11 @@ public class Controller {
         };
     }
 
-    public static byte[] handleGretting() {
+    public static String handleGretting() {
         return Response.of("Hello World");
     }
 
-    public static byte[] handleMessage(Request request) throws IOException {
+    public static String handleMessage(Request request) throws IOException {
         if (!request.getMethod().equals(HttpMethod.POST)) {
             return Response.of("""
                     { "message": "Request method must be a POST." }""", Response.Type.JSON);
@@ -25,10 +40,9 @@ public class Controller {
         }
 
         return Response.echo(request, Response.Type.JSON);
-
     }
 
-    public static byte[] handleNotFound(Request request) {
+    public static String handleNotFound(Request request) {
         return Response.of("No static resource found for " + request.getPath() + ".");
     }
 }

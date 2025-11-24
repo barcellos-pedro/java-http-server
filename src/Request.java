@@ -56,7 +56,7 @@ public class Request {
     }
 
     private String[] getRequestLine() throws IOException {
-        return getReader().readLine().split(" ", 3);
+        return reader.readLine().split(" ", 3);
     }
 
     public void setRequestLineFields() throws IOException {
@@ -96,10 +96,6 @@ public class Request {
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
-    }
-
-    public BufferedReader getReader() {
-        return reader;
     }
 
     public void setReader(BufferedReader reader) {
