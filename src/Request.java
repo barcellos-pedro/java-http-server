@@ -1,7 +1,7 @@
 import module java.base;
 
 public class Request {
-    private String method;
+    private HttpMethod method;
     private String path;
     private String protocol;
     private Map<String, String> headers;
@@ -61,16 +61,16 @@ public class Request {
 
     public void setRequestLineFields() throws IOException {
         var requestLine = getRequestLine();
-        setMethod(requestLine[0]);
+        setMethod(HttpMethod.of(requestLine[0]));
         setPath(requestLine[1]);
         setProtocol(requestLine[2]);
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(HttpMethod method) {
         this.method = method;
     }
 
@@ -108,12 +108,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request{" +
-                "method='" + method + '\'' +
-                ", path='" + path + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", headers=" + headers +
-                ", reader=" + reader +
-                '}';
+        return "Request{method='%s', path='%s', protocol='%s', headers=%s}"
+                .formatted(method, path, protocol, headers);
     }
 }
