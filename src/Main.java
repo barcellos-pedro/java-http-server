@@ -1,3 +1,3 @@
 void main() {
-    HttpServer.of(8080).start();
+    HttpServer.create(8080).start();
 }
