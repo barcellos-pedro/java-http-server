@@ -8,8 +8,8 @@ public class Controller {
         try (var response = socket.getOutputStream()) {
             var data = Controller.route(socket);
             response.write(data.getBytes(UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException exception) {
+            IO.println("[REQUEST:ERROR] " + exception);
         }
     }
 

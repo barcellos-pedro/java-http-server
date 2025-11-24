@@ -18,8 +18,6 @@ public class HttpServer {
             for (; ; ) {
                 try (var socket = server.accept()) {
                     handler.accept(socket);
-                } catch (IOException exception) {
-                    IO.println("[REQUEST:ERROR] " + exception);
                 }
             }
         }
