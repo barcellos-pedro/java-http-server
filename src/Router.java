@@ -7,7 +7,7 @@ public class Router {
     public static void handle(Socket socket) {
         try (var response = socket.getOutputStream()) {
             var request = Request.of(socket);
-            var data = Router.route(request);
+            var data = route(request);
             IO.println(request);
             response.write(data.getBytes(UTF_8));
         } catch (IOException exception) {
