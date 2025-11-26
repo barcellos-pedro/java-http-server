@@ -32,27 +32,32 @@ The structure is intentionally simple so you can extend it — adding controller
 
 ```text
 java-echo-server/
-└── src
-    └── main
-        └── java
-            └── com
-                └── server
-                    ├── Main.java
-                    ├── controller
-                    │   ├── EchoController.java
-                    │   ├── GreetingController.java
-                    │   ├── NotFoundController.java
-                    │   └── RequestHandler.java
-                    ├── http
-                    │   ├── HttpMethod.java
-                    │   ├── HttpServer.java
-                    │   ├── Request.java
-                    │   └── Response.java
-                    ├── router
-                    │   ├── Router.java
-                    │   └── Routes.java
-                    └── utils
-                        └── ResponseTemplate.java
+├── README.md
+├── src
+│   └── main
+│       └── java
+│           └── com
+│               └── server
+│                   ├── controller
+│                   │   ├── EchoController.java
+│                   │   ├── GreetingController.java
+│                   │   ├── NotFoundController.java
+│                   │   └── RequestHandler.java
+│                   ├── http
+│                   │   ├── HttpMethod.java
+│                   │   ├── HttpServer.java
+│                   │   ├── Request.java
+│                   │   └── Response.java
+│                   ├── Main.java
+│                   ├── router
+│                   │   ├── Router.java
+│                   │   └── Routes.java
+│                   └── utils
+│                       └── ResponseTemplate.java
+└── tests
+    ├── load_get_greeting.sh
+    ├── load_post_message.sh
+    └── run_all_load_tests.sh
 ```
 
 ## 🧩 Class Diagram
