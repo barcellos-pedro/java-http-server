@@ -65,127 +65,60 @@ java-echo-server/
 Below is a full Mermaid UML diagram representing the architecture:
 
 ```mermaid
-classDiagram
+sequenceDiagram
+    autonumber
 
-    %% Interfaces
-    class RequestHandler {
-        <<interface>>
-        +handle(request) String
-    }
+    participant Client
+    participant HttpServer
+    participant Router
+    participant Routes
+    participant Controller
+    participant Response
 
-    %% Enums
-    class HttpMethod {
-        <<enumeration>>
-        GET
-        POST
-        PUT
-        PATCH
-        DELETE
-    }
+    Client ->> HttpServer: HTTP request
+    HttpServer ->> Router: handle(socket)
+    Router ->> Routes: getOrNotFound(request)
+    Routes -->> Router: handler
+    Router ->> Controller: handle(request)
+    Controller -->> Router: body
+    Router ->> Response: build response
+    Response -->> Router: http string
+    Router -->> Client: http response
+```
 
-    class Response_Type {
-        <<enumeration>>
-        TEXT
-        JSON
-    }
+## 🧱Architecture Overview
 
-    %% Core classes
-    class Main {
-        +main()
-    }
+```mermaid
+flowchart LR
 
-    class HttpServer {
-        -port : int
-        +HttpServer(int)
-        +create(int) HttpServer
-        +listen(Consumer<Socket>) void
-    }
+    Client["Client(curl / browser)"]
 
-    class Router {
-        +handle(Socket) void
-        +route(Request) String
-    }
+    subgraph Server["Java Echo Server"]
+        HttpServer["HttpServer(Socket listener)"]
+        Router["Router(Request dispatcher)"]
+        Routes["Routes(Path → Handler mapping)"]
 
-    class Routes {
-        +mapping : Map<String, RequestHandler>
-        +getOrNotFound(Request) String
-    }
+        subgraph Controllers
+            Greeting["GreetingController"]
+            Echo["EchoController"]
+            NotFound["NotFoundController"]
+        end
 
-    class Request {
-        -method : HttpMethod
-        -path : String
-        -protocol : String
-        -headers : Map<String, String>
-        -reader : BufferedReader
+        subgraph HTTP
+            Request["Request(Parsed HTTP)"]
+            Response["Response(HTTP builder)"]
+            Templates["ResponseTemplate"]
+        end
+    end
 
-        +Request()
-        +of(Socket) Request
-        +getReader(Socket) BufferedReader
-        +setRequestLineFields() void
-        +parseHeaders() void
-        +parseBody() String
-        +hasBody() boolean
-        +getMethod() HttpMethod
-        +setMethod(HttpMethod) void
-        +getPath() String
-        +setPath(String) void
-        +getProtocol() String
-        +setProtocol(String) void
-        +getHeaders() Map<String,String>
-        +setHeaders(Map<String,String>) void
-        +setReader(BufferedReader) void
-        +toString() String
-    }
-
-    class Response {
-        +of(String) String
-        +of(String, Type) String
-        +echo(Request, Type) String
-        +bindValues(Type, String) String
-    }
-
-    class ResponseTemplate {
-        +TEXT : String
-        +JSON : String
-    }
-
-    class GreetingController {
-        +handle(Request) String
-    }
-
-    class EchoController {
-        +handle(Request) String
-        -valid(Request) boolean
-    }
-
-    class NotFoundController {
-        +handle(Request) String
-    }
-
-    class IO {
-        +println(Object) void
-    }
-
-    %% Relationships
-    RequestHandler <|.. GreetingController
-    RequestHandler <|.. EchoController
-    RequestHandler <|.. NotFoundController
-
-    Routes "1" *-- "0..*" RequestHandler : mapping
-    Router --> Request : uses
-    Router --> Routes : route / getOrNotFound
-    HttpServer --> Router : passes handler
-    Main --> HttpServer : creates / listens
-    Response ..> Response_Type : uses
-    Response --> ResponseTemplate : uses
-    Response --> Request : echo()
-    Request --> HttpMethod : uses
-    Request "1" *-- "1" BufferedReader : reader
-    IO <.. Router
-    IO <.. Request
-    IO <.. HttpServer
-    IO <.. Response
-
-    %% Notes
-    Note right of Request : Request.of(socket)\nbuilds a Request\n- getReader(socket)\n- setRequestLineFields()\n- parseHeaders()
-    Note left of Routes : mapping = Map.of("/greeting" -> GreetingController,\n"/message" -> EchoController")
+    Client --> HttpServer
+    HttpServer --> Router
+    Router --> Request
+    Router --> Routes
+    Routes --> Greeting
+    Routes --> Echo
+    Routes --> NotFound
+    Router --> Response
+    Response --> Templates
+    Response --> Client
+```
